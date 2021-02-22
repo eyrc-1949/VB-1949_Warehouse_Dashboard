@@ -96,9 +96,9 @@
         refreshChart();
     
         // Fetch every 5 second
-        setInterval(refreshMap, 5000);
-        setInterval(refreshTable, 5000);
-        setInterval(refreshChart, 5000);
+        setInterval(refreshMap, 1000);
+        setInterval(refreshTable, 1000);
+        setInterval(refreshChart, 1000);
     });
     google.charts.load("current", {packages:['corechart']});
     google.charts.setOnLoadCallback(refreshChart);
@@ -121,12 +121,53 @@
                 "OderID" : data.feed.entry[i].gsx$orderid.$t,
                 "Item" : data.feed.entry[i].gsx$item.$t,
                 "Latitude": parseFloat(data.feed.entry[i].gsx$latitude.$t),
-                "Longitude": parseFloat(data.feed.entry[i].gsx$longitude.$t)
+                "Longitude": parseFloat(data.feed.entry[i].gsx$longitude.$t),
+                "Dispatch":data.feed.entry[i].gsx$dispatchtime.$t ,
+                "Shipping":data.feed.entry[i].gsx$shippingtime.$t,
             };
             jsonDataObject.push(json_data);
                 
             for (var j = 0; j < jsonDataObject.length; j++) {
-                var marker = L.marker(L.latLng(parseFloat(jsonDataObject[j].Latitude), parseFloat(jsonDataObject[j].Longitude)));
+              if (jsonDataObject[j].Dispatch=="" && jsonDataObject[j].Shipping=="")
+		            {
+                  var redIcon = new L.Icon({
+		              iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+		              shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+		              iconSize: [25, 41],
+		              iconAnchor: [12, 41],
+		              popupAnchor: [1, -34],
+		              shadowSize: [41, 41]
+                 });
+
+                  var marker = L.marker(L.latLng(parseFloat(jsonDataObject[j].Latitude), parseFloat(jsonDataObject[j].Longitude)), {icon: redIcon});
+		            }
+                else if (jsonDataObject[j].Shipping=="")
+		            {
+                  var yellowIcon = new L.Icon({
+		              iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-gold.png',
+		              shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+		              iconSize: [25, 41],
+		              iconAnchor: [12, 41],
+		              popupAnchor: [1, -34],
+		              shadowSize: [41, 41]
+                  });
+
+                  var marker = L.marker(L.latLng(parseFloat(jsonDataObject[j].Latitude), parseFloat(jsonDataObject[j].Longitude)), {icon: yellowIcon});
+		            }
+                else
+		            {
+                  var greenIcon = new L.Icon({
+		              iconUrl:'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+                  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+		              iconSize: [25, 41],
+		              iconAnchor: [12, 41],
+		              popupAnchor: [1, -34],
+		              shadowSize: [41, 41]
+                  });
+
+                  var marker = L.marker(L.latLng(parseFloat(jsonDataObject[j].Latitude), parseFloat(jsonDataObject[j].Longitude)), {icon: greenIcon});
+		            }
+                //var marker = L.marker(L.latLng(parseFloat(jsonDataObject[j].Latitude), parseFloat(jsonDataObject[j].Longitude)));
                 marker.bindPopup(jsonDataObject[j].City, {
                         autoClose: false
                 });
@@ -233,4 +274,3 @@
 
 </script>
 </html>
-
